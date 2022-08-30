@@ -137,3 +137,8 @@ variable "zone" {
   type        = string
   default     = "europe-west2-*"
 }
+
+variable "topic_id" {
+  description = "Budget Pub/Sub topic id"
+  type = string
+}
