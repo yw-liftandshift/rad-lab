@@ -138,7 +138,7 @@ variable "zone" {
   default     = "europe-west2-*"
 }
 
-variable "topic_id" {
-  description = "Budget Pub/Sub topic id"
+variable "budget_notifications_pubsub_topic_id" {
+  description = "Budget Notifications Pub/Sub topic id"
   type = string
 }
