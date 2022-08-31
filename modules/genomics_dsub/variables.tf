@@ -143,10 +143,10 @@ variable "budget_notifications_pubsub_topic_id" {
   type = string
 }
 
-variable "currency_code" {
+variable "budget_currency_code" {
   description = "The 3-letter currency code defined in ISO 4217"
 }
 
-variable "amount" {
+variable "budget_amount" {
   description = "Budget amount"
 }
