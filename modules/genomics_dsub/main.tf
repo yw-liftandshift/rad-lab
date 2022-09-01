@@ -287,8 +287,8 @@ resource "google_billing_budget" "budget" {
 
   amount {
     specified_amount {
-      currency_code = var.currency_code
-      units         = var.amount
+      currency_code = var.budget_currency_code
+      units         = var.budget_amount
     }
   }
 
