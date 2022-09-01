@@ -191,6 +191,14 @@ resource "google_storage_bucket_iam_member" "sa_p_ngs_output_bucket" {
   member = "serviceAccount:${google_service_account.sa_p_ngs.email}"
 }
 
+resource "time_sleep" "wait_roles_propagation" {
+  depends_on = [
+    google_project_iam_member.sa_p_ngs_permissions
+  ]
+
+  create_duration = "120s"
+}
+
 resource "google_cloudfunctions2_function" "function" {
   provider    = google-beta
   name        = "ngs-qc-fastqc-fn"
@@ -240,7 +248,8 @@ resource "google_cloudfunctions2_function" "function" {
     google_project_iam_member.sa_p_ngs_permissions,
     google_project_iam_member.gcs_sa_pubsub_publisher,
     google_storage_bucket_iam_member.sa_p_ngs_input_bucket,
-    google_storage_bucket_iam_member.sa_p_ngs_output_bucket
+    google_storage_bucket_iam_member.sa_p_ngs_output_bucket,
+    time_sleep.wait_roles_propagation
   ]
 }
 
