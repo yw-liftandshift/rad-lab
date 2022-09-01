@@ -291,7 +291,18 @@ resource "google_billing_budget" "budget" {
       units         = var.budget_amount
     }
   }
-
+  custom_period { 
+      start_date {
+        year = var.budget_start_date_year
+        month = var.budget_start_date_month
+        day = var.budget_start_date_day
+      }
+      end_date {
+        year = var.budget_end_date_year
+        month = var.budget_end_date_month
+        day = var.budget_end_date_day
+      }
+    }
   threshold_rules {
     threshold_percent = 1.0
   }
