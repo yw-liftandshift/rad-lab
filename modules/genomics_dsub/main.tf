@@ -51,6 +51,7 @@ module "project_radlab_genomics" {
   billing_account   = var.billing_account_id
   org_id            = var.organization_id
   activate_apis = [
+    "billingbudgets.googleapis.com",
     "compute.googleapis.com",
     "lifesciences.googleapis.com",
     "cloudfunctions.googleapis.com",
@@ -194,7 +195,7 @@ resource "google_storage_bucket_iam_member" "sa_p_ngs_output_bucket" {
 
 resource "time_sleep" "wait_roles_propagation" {
   depends_on = [
-    google_project_iam_member.sa_p_ngs_permissions
+    module.project_radlab_genomics.project_id
   ]
 
   create_duration = "120s"
