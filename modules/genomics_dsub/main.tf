@@ -330,8 +330,7 @@ resource "google_billing_budget" "budget" {
   all_updates_rule {
     monitoring_notification_channels = [
       google_monitoring_notification_channel.scientist_notification_channel.id,
-      google_monitoring_notification_channel.manager_notification_channel.id,
-      var.budget_notifications_pubsub_topic_id
+      google_monitoring_notification_channel.manager_notification_channel.id
     ]
     disable_default_iam_recipients = true
   }
