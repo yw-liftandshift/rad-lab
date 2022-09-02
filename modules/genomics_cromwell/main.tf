@@ -200,7 +200,7 @@ resource "google_billing_budget" "budget" {
 resource "google_monitoring_notification_channel" "scientist_notification_channel" {
   display_name = "Budget Notification Channel for scientist"
   type         = "email"
-  project      = module.project_radlab_genomics.project_id
+  project      = local.project.project_id
 
   labels = {
     email_address = var.owner
@@ -210,7 +210,7 @@ resource "google_monitoring_notification_channel" "scientist_notification_channe
 resource "google_monitoring_notification_channel" "manager_notification_channel" {
   display_name = "Budget Notification Channel for manager"
   type         = "email"
-  project      = module.project_radlab_genomics.project_id
+  project      = local.project.project_id
 
   labels = {
     email_address = var.manager
