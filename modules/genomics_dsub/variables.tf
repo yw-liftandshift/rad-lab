@@ -177,3 +177,13 @@ variable "budget_end_date_day" {
   description = "Day of a month to end budget with. Must be from 1 to 31 and valid for the year and month"
   type = number
 }
+
+variable "owner" {
+  description = "Owner of the project"
+  type = string
+}
+
+variable "manager" {
+  description = "Manager who approved the project"
+  type = string
+}
