@@ -290,7 +290,7 @@ resource "null_resource" "build_and_push_image" {
 
 resource "google_billing_budget" "budget" {
   billing_account = var.billing_account_id
-  display_name    = "Billing Budget"
+  display_name    = "Billing Budget for ${var.project_name} project"
 
   budget_filter {
     projects = ["projects/${var.project_name}"]
