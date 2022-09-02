@@ -292,15 +292,7 @@ resource "google_billing_budget" "budget" {
 
   budget_filter {
     projects = ["projects/${var.project_name}"]
-  }
-
-  amount {
-    specified_amount {
-      currency_code = var.budget_currency_code
-      units         = var.budget_amount
-    }
-  }
-  custom_period { 
+    custom_period { 
       start_date {
         year = var.budget_start_date_year
         month = var.budget_start_date_month
@@ -312,6 +304,14 @@ resource "google_billing_budget" "budget" {
         day = var.budget_end_date_day
       }
     }
+  }
+
+  amount {
+    specified_amount {
+      currency_code = var.budget_currency_code
+      units         = var.budget_amount
+    }
+  }
   threshold_rules {
     threshold_percent = 1.0
   }
@@ -319,10 +319,10 @@ resource "google_billing_budget" "budget" {
     threshold_percent = 0.9
   }
   threshold_rules {
-    treshhold_percent = 0.5
+    threshold_percent = 0.5
   }
   threshold_rules {
-    treshhold_percent = 0.25
+    threshold_percent = 0.25
   }
 
   all_updates_rule {
