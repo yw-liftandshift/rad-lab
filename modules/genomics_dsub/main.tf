@@ -57,7 +57,8 @@ module "project_radlab_genomics" {
     "cloudbuild.googleapis.com",
     "eventarc.googleapis.com",
     "artifactregistry.googleapis.com",
-    "run.googleapis.com"
+    "run.googleapis.com",
+    "billingbudgets.googleapis.com"
   ]
 }
 
