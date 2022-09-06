@@ -294,6 +294,7 @@ resource "google_billing_budget" "budget" {
 
   budget_filter {
     projects = ["projects/${var.project_name}"]
+    credit_types_treatment = "EXCLUDE_ALL_CREDITS"
     custom_period { 
       start_date {
         year = var.budget_start_date_year
