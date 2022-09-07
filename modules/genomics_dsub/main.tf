@@ -185,24 +185,20 @@ resource "google_storage_bucket_iam_member" "sa_p_ngs_input_bucket" {
   bucket = google_storage_bucket.input_bucket.name
   role   = "roles/storage.admin"
   member = "serviceAccount:${google_service_account.sa_p_ngs.email}"
+
+  depends_on = [
+    google_project_iam_member.gcs_sa_pubsub_publisher
+  ]
 }
 
 resource "google_storage_bucket_iam_member" "sa_p_ngs_output_bucket" {
   bucket = google_storage_bucket.output_bucket.name
   role   = "roles/storage.admin"
   member = "serviceAccount:${google_service_account.sa_p_ngs.email}"
-}
 
-resource "time_sleep" "wait_roles_propagation" {
   depends_on = [
-    module.project_radlab_genomics.project_id,
-    google_project_iam_member.sa_p_ngs_permissions,
-    google_project_iam_member.gcs_sa_pubsub_publisher,
-    google_storage_bucket_iam_member.sa_p_ngs_input_bucket,
-    google_storage_bucket_iam_member.sa_p_ngs_output_bucket
+    google_storage_bucket_iam_member.sa_p_ngs_input_bucket
   ]
-
-  create_duration = "360s"
 }
 
 resource "google_cloudfunctions2_function" "function" {
@@ -252,7 +248,10 @@ resource "google_cloudfunctions2_function" "function" {
   }
 
   depends_on = [
-    time_sleep.wait_roles_propagation,
+    null_resource.build_and_push_image,
+    google_project_iam_member.gcs_sa_pubsub_publisher,
+    google_storage_bucket_iam_member.sa_p_ngs_input_bucket,
+    google_storage_bucket_iam_member.sa_p_ngs_output_bucket
   ]
 }
 
