@@ -198,7 +198,7 @@ resource "time_sleep" "wait_roles_propagation" {
     module.project_radlab_genomics.project_id
   ]
 
-  create_duration = "120s"
+  create_duration = "240s"
 }
 
 resource "google_cloudfunctions2_function" "function" {
@@ -239,7 +239,8 @@ resource "google_cloudfunctions2_function" "function" {
   }
 
   event_trigger {
-    event_type = "google.cloud.storage.object.v1.finalized"
+    event_type            = "google.cloud.storage.object.v1.finalized"
+    service_account_email = google_service_account.sa_p_ngs.email
     event_filters {
       attribute = "bucket"
       value     = google_storage_bucket.input_bucket.name
@@ -247,11 +248,11 @@ resource "google_cloudfunctions2_function" "function" {
   }
 
   depends_on = [
+    time_sleep.wait_roles_propagation,
     google_project_iam_member.sa_p_ngs_permissions,
     google_project_iam_member.gcs_sa_pubsub_publisher,
     google_storage_bucket_iam_member.sa_p_ngs_input_bucket,
-    google_storage_bucket_iam_member.sa_p_ngs_output_bucket,
-    time_sleep.wait_roles_propagation
+    google_storage_bucket_iam_member.sa_p_ngs_output_bucket
   ]
 }
 
@@ -293,18 +294,18 @@ resource "google_billing_budget" "budget" {
   display_name    = "Billing Budget for ${var.project_name} project"
 
   budget_filter {
-    projects = ["projects/${var.project_name}"]
+    projects               = ["projects/${var.project_name}"]
     credit_types_treatment = "EXCLUDE_ALL_CREDITS"
-    custom_period { 
+    custom_period {
       start_date {
-        year = var.budget_start_date_year
+        year  = var.budget_start_date_year
         month = var.budget_start_date_month
-        day = var.budget_start_date_day
+        day   = var.budget_start_date_day
       }
       end_date {
-        year = var.budget_end_date_year
+        year  = var.budget_end_date_year
         month = var.budget_end_date_month
-        day = var.budget_end_date_day
+        day   = var.budget_end_date_day
       }
     }
   }
