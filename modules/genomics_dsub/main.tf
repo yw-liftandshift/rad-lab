@@ -195,6 +195,7 @@ resource "google_storage_bucket_iam_member" "sa_p_ngs_output_bucket" {
 
 resource "time_sleep" "wait_roles_propagation" {
   depends_on = [
+    module.project_radlab_genomics.project_id,
     google_project_iam_member.sa_p_ngs_permissions,
     google_project_iam_member.gcs_sa_pubsub_publisher,
     google_storage_bucket_iam_member.sa_p_ngs_input_bucket,
