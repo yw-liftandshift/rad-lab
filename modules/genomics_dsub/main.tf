@@ -195,10 +195,13 @@ resource "google_storage_bucket_iam_member" "sa_p_ngs_output_bucket" {
 
 resource "time_sleep" "wait_roles_propagation" {
   depends_on = [
-    module.project_radlab_genomics.project_id
+    google_project_iam_member.sa_p_ngs_permissions,
+    google_project_iam_member.gcs_sa_pubsub_publisher,
+    google_storage_bucket_iam_member.sa_p_ngs_input_bucket,
+    google_storage_bucket_iam_member.sa_p_ngs_output_bucket
   ]
 
-  create_duration = "240s"
+  create_duration = "360s"
 }
 
 resource "google_cloudfunctions2_function" "function" {
@@ -249,10 +252,6 @@ resource "google_cloudfunctions2_function" "function" {
 
   depends_on = [
     time_sleep.wait_roles_propagation,
-    google_project_iam_member.sa_p_ngs_permissions,
-    google_project_iam_member.gcs_sa_pubsub_publisher,
-    google_storage_bucket_iam_member.sa_p_ngs_input_bucket,
-    google_storage_bucket_iam_member.sa_p_ngs_output_bucket
   ]
 }
 
