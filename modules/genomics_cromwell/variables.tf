@@ -176,11 +176,6 @@ variable "set_trustedimage_project_policy" {
   default     = true
 }
 
-variable "budget_notifications_pubsub_topic_id" {
-  description = "Budget Notifications Pub/Sub topic id"
-  type = string
-}
-
 variable "budget_currency_code" {
   description = "The 3-letter currency code defined in ISO 4217"
   type = string
