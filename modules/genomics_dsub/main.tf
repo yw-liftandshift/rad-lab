@@ -118,7 +118,7 @@ resource "google_project_iam_binding" "genomics_ngs_user_role2" {
 
 resource "time_sleep" "wait_iam_binding" {
   depends_on = [
-    google_project_iam_binding.genomics_ngs_user_role1s
+    google_project_iam_binding.genomics_ngs_user_role1
   ]
 
   create_duration = "120s"
