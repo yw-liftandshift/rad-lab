@@ -116,6 +116,14 @@ resource "google_project_iam_binding" "genomics_ngs_user_role2" {
   role    = "roles/viewer"
 }
 
+resource "time_sleep" "wait_iam_binding" {
+  depends_on = [
+    google_project_iam_binding.genomics_ngs_user_role1s
+  ]
+
+  create_duration = "120s"
+}
+
 # Bucket to store sequence inputs and processed outputs #
 resource "google_storage_bucket" "input_bucket" {
   project                     = module.project_radlab_genomics.project_id
@@ -123,6 +131,9 @@ resource "google_storage_bucket" "input_bucket" {
   location                    = local.region
   uniform_bucket_level_access = true
   force_destroy               = true
+  depends_on = [
+    time_sleep.wait_iam_binding
+  ]
 }
 
 resource "google_storage_bucket_iam_binding" "binding1" {
