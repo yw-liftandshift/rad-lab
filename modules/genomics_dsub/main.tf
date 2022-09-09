@@ -262,7 +262,9 @@ resource "google_cloudfunctions2_function" "function" {
     null_resource.build_and_push_image,
     google_project_iam_member.gcs_sa_pubsub_publisher,
     google_storage_bucket_iam_member.sa_p_ngs_input_bucket,
-    google_storage_bucket_iam_member.sa_p_ngs_output_bucket
+    google_storage_bucket_iam_member.sa_p_ngs_output_bucket,
+    time_sleep.wait_iam_binding
+
   ]
 }
 
@@ -296,6 +298,7 @@ resource "null_resource" "build_and_push_image" {
   depends_on = [
     google_artifact_registry_repository.fastqc,
     null_resource.create_cloudbuild_bucket
+
   ]
 }
 
