@@ -131,9 +131,6 @@ resource "google_storage_bucket" "input_bucket" {
   location                    = local.region
   uniform_bucket_level_access = true
   force_destroy               = true
-  depends_on = [
-    time_sleep.wait_iam_binding
-  ]
 }
 
 resource "google_storage_bucket_iam_binding" "binding1" {
