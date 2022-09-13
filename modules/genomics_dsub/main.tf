@@ -121,7 +121,7 @@ resource "time_sleep" "wait_iam_binding" {
     google_project_iam_binding.genomics_ngs_user_role1
   ]
 
-  create_duration = "120s"
+  create_duration = "180s"
 }
 
 # Bucket to store sequence inputs and processed outputs #
@@ -260,8 +260,8 @@ resource "google_cloudfunctions2_function" "function" {
     google_project_iam_member.gcs_sa_pubsub_publisher,
     google_storage_bucket_iam_member.sa_p_ngs_input_bucket,
     google_storage_bucket_iam_member.sa_p_ngs_output_bucket,
-    time_sleep.wait_iam_binding
-
+    time_sleep.wait_iam_binding,
+    google_storage_bucket_iam_binding.binding1
   ]
 }
 
