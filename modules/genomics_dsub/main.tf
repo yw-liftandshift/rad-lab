@@ -294,7 +294,8 @@ resource "null_resource" "build_and_push_image" {
 
   depends_on = [
     google_artifact_registry_repository.fastqc,
-    null_resource.create_cloudbuild_bucket
+    null_resource.create_cloudbuild_bucket,
+    google_project_iam_member.sa_p_ngs_permissions
 
   ]
 }
