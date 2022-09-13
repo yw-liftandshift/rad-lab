@@ -261,7 +261,9 @@ resource "google_cloudfunctions2_function" "function" {
     google_storage_bucket_iam_member.sa_p_ngs_input_bucket,
     google_storage_bucket_iam_member.sa_p_ngs_output_bucket,
     time_sleep.wait_iam_binding,
-    google_storage_bucket_iam_binding.binding1
+    google_storage_bucket_iam_binding.binding1,
+    google_storage_bucket.input_bucket,
+    google_storage_bucket.output_bucket
   ]
 }
 
