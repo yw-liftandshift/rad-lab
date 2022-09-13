@@ -116,14 +116,6 @@ resource "google_project_iam_binding" "genomics_ngs_user_role2" {
   role    = "roles/viewer"
 }
 
-resource "time_sleep" "wait_iam_binding" {
-  depends_on = [
-    google_project_iam_binding.genomics_ngs_user_role1
-  ]
-
-  create_duration = "180s"
-}
-
 # Bucket to store sequence inputs and processed outputs #
 resource "google_storage_bucket" "input_bucket" {
   project                     = module.project_radlab_genomics.project_id
@@ -209,6 +201,16 @@ resource "google_storage_bucket_iam_member" "sa_p_ngs_output_bucket" {
   ]
 }
 
+resource "time_sleep" "wait_iam_binding" {
+  depends_on = [
+    google_project_iam_binding.genomics_ngs_user_role1,
+    google_storage_bucket_iam_member.sa_p_ngs_input_bucket,
+    google_storage_bucket_iam_member.sa_p_ngs_output_bucket
+  ]
+
+  create_duration = "180s"
+}
+
 resource "google_cloudfunctions2_function" "function" {
   provider    = google-beta
   name        = "ngs-qc-fastqc-fn"
@@ -263,7 +265,7 @@ resource "google_cloudfunctions2_function" "function" {
     time_sleep.wait_iam_binding,
     google_storage_bucket_iam_binding.binding1,
     google_storage_bucket.input_bucket,
-    google_storage_bucket.output_bucket
+    google_storage_bucket.output_bucket,
   ]
 }
 
