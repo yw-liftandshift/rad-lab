@@ -84,6 +84,7 @@ module "vpc_ngs" {
 
 }
 
+# Service Account Creation
 resource "google_service_account" "sa_p_ngs" {
   project      = module.project_radlab_genomics.project_id
   account_id   = format("sa-p-ngs-%s", local.random_id)
@@ -97,6 +98,24 @@ resource "google_project_iam_member" "sa_p_ngs_permissions" {
   role     = each.value
 }
 
+# Bucket to store sequence inputs and processed outputs #
+resource "google_storage_bucket" "input_bucket" {
+  project                     = module.project_radlab_genomics.project_id
+  name                        = join("", ["ngs-input-bucket-", local.random_id])
+  location                    = local.region
+  uniform_bucket_level_access = true
+  force_destroy               = true
+}
+
+resource "google_storage_bucket" "output_bucket" {
+  project                     = module.project_radlab_genomics.project_id
+  name                        = join("", ["ngs-output-bucket-", local.random_id])
+  location                    = local.region
+  uniform_bucket_level_access = true
+  force_destroy               = true
+}
+
+# Trusted Users
 resource "google_service_account_iam_member" "sa_ngs_user_iam" {
   for_each           = var.trusted_users
   member             = each.value
@@ -116,27 +135,10 @@ resource "google_project_iam_binding" "genomics_ngs_user_role2" {
   role    = "roles/viewer"
 }
 
-# Bucket to store sequence inputs and processed outputs #
-resource "google_storage_bucket" "input_bucket" {
-  project                     = module.project_radlab_genomics.project_id
-  name                        = join("", ["ngs-input-bucket-", local.random_id])
-  location                    = local.region
-  uniform_bucket_level_access = true
-  force_destroy               = true
-}
-
 resource "google_storage_bucket_iam_binding" "binding1" {
   bucket  = google_storage_bucket.input_bucket.name
   role    = "roles/storage.admin"
   members = var.trusted_users
-}
-
-resource "google_storage_bucket" "output_bucket" {
-  project                     = module.project_radlab_genomics.project_id
-  name                        = join("", ["ngs-output-bucket-", local.random_id])
-  location                    = local.region
-  uniform_bucket_level_access = true
-  force_destroy               = true
 }
 
 resource "google_storage_bucket_iam_binding" "binding2" {
@@ -145,7 +147,40 @@ resource "google_storage_bucket_iam_binding" "binding2" {
   members = var.trusted_users
 }
 
-# Bucket to store Cloud functions #
+# Locally build container for bioinformatics tool and push to artifact registry #
+resource "google_artifact_registry_repository" "fastqc" {
+  project       = module.project_radlab_genomics.project_id
+  location      = var.region
+  repository_id = "fastqc"
+  format        = "DOCKER"
+}
+
+resource "null_resource" "create_cloudbuild_bucket" {
+  provisioner "local-exec" {
+    working_dir = "${path.module}/scripts"
+    command     = "./create-cloud-build-bucket.sh ${module.project_radlab_genomics.project_id} ${local.region}"
+  }
+}
+
+resource "null_resource" "build_and_push_image" {
+  triggers = {
+    cloudbuild_yaml_sha = sha1(file("${path.module}/scripts/build/container/fastqc-0.11.9a/cloudbuild.yaml"))
+    dockerfile_sha      = sha1(file("${path.module}/scripts/build/container/fastqc-0.11.9a/Dockerfile"))
+    build_script_sha    = sha1(file("${path.module}/scripts/build/container/fastqc-0.11.9a/build-container.sh"))
+  }
+
+  provisioner "local-exec" {
+    working_dir = path.module
+    command     = "${path.module}/scripts/build/container/fastqc-0.11.9a/build-container.sh ${module.project_radlab_genomics.project_id} ${local.region}"
+  }
+
+  depends_on = [
+    google_artifact_registry_repository.fastqc,
+    null_resource.create_cloudbuild_bucket,
+  ]
+}
+
+# Create cloud functions from source code (Zip) stored in Bucket #
 resource "google_storage_bucket" "source_code_bucket" {
   project                     = module.project_radlab_genomics.project_id
   name                        = join("", ["radlab-source-code-bucket-", local.random_id])
@@ -165,7 +200,6 @@ resource "google_storage_bucket_object" "archive" {
   source = data.archive_file.source_zip.output_path
 }
 
-# Create cloud functions from source code (Zip) stored in Bucket #
 data "google_storage_project_service_account" "gcs_sa" {
   project = module.project_radlab_genomics.project_id
 
@@ -199,19 +233,6 @@ resource "google_storage_bucket_iam_member" "sa_p_ngs_output_bucket" {
   depends_on = [
     google_storage_bucket_iam_member.sa_p_ngs_input_bucket
   ]
-}
-
-resource "time_sleep" "onboarding_stop" {
-  depends_on = [
-    google_project_iam_member.gcs_sa_pubsub_publisher,
-    google_storage_bucket_iam_member.sa_p_ngs_input_bucket,
-    google_storage_bucket_iam_member.sa_p_ngs_output_bucket,
-    google_storage_bucket_iam_binding.binding1,
-    google_storage_bucket.input_bucket,
-    google_storage_bucket.output_bucket,
-  ]
-
-  create_duration = "1s"
 }
 
 resource "google_cloudfunctions2_function" "function" {
@@ -261,44 +282,7 @@ resource "google_cloudfunctions2_function" "function" {
   }
 
   depends_on = [
-    time_sleep.onboarding_stop
-  ]
-}
-
-# Locally build container for bioinformatics tool and push to artifact registry #
-resource "google_artifact_registry_repository" "fastqc" {
-  project       = module.project_radlab_genomics.project_id
-  location      = var.region
-  repository_id = "fastqc"
-  format        = "DOCKER"
-
-  depends_on = [
-    time_sleep.onboarding_stop
-  ]
-}
-
-resource "null_resource" "create_cloudbuild_bucket" {
-  provisioner "local-exec" {
-    working_dir = "${path.module}/scripts"
-    command     = "./create-cloud-build-bucket.sh ${module.project_radlab_genomics.project_id} ${local.region}"
-  }
-}
-
-resource "null_resource" "build_and_push_image" {
-  triggers = {
-    cloudbuild_yaml_sha = sha1(file("${path.module}/scripts/build/container/fastqc-0.11.9a/cloudbuild.yaml"))
-    dockerfile_sha      = sha1(file("${path.module}/scripts/build/container/fastqc-0.11.9a/Dockerfile"))
-    build_script_sha    = sha1(file("${path.module}/scripts/build/container/fastqc-0.11.9a/build-container.sh"))
-  }
-
-  provisioner "local-exec" {
-    working_dir = path.module
-    command     = "${path.module}/scripts/build/container/fastqc-0.11.9a/build-container.sh ${module.project_radlab_genomics.project_id} ${local.region}"
-  }
-
-  depends_on = [
-    google_artifact_registry_repository.fastqc,
-    null_resource.create_cloudbuild_bucket,
+    null_resource.build_and_push_image
   ]
 }
 
