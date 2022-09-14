@@ -245,3 +245,8 @@ variable "zone" {
   type        = string
   default     = "europe-west2-c"
 }
+
+variable "owner" {
+  description = "Owner of the project"
+  type        = string
+}

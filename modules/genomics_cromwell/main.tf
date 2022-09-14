@@ -154,18 +154,18 @@ resource "google_billing_budget" "budget" {
   display_name    = "Billing Budget for ${var.project_name} project"
 
   budget_filter {
-    projects = ["projects/${var.project_name}"]
+    projects               = ["projects/${var.project_name}"]
     credit_types_treatment = "EXCLUDE_ALL_CREDITS"
-    custom_period { 
+    custom_period {
       start_date {
-        year = var.budget_start_date_year
+        year  = var.budget_start_date_year
         month = var.budget_start_date_month
-        day = var.budget_start_date_day
+        day   = var.budget_start_date_day
       }
       end_date {
-        year = var.budget_end_date_year
+        year  = var.budget_end_date_year
         month = var.budget_end_date_month
-        day = var.budget_end_date_day
+        day   = var.budget_end_date_day
       }
     }
   }

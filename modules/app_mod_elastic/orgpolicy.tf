@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
- resource "google_project_organization_policy" "vpc_peering_policy" {
+
+resource "google_project_organization_policy" "vpc_peering_policy" {
   count      = var.set_vpc_peering_policy ? 1 : 0
   constraint = "compute.restrictVpcPeering"
   project    = local.project.project_id
@@ -43,13 +43,13 @@ resource "google_project_organization_policy" "shielded_vm_policy" {
 }
 
 resource "time_sleep" "wait_120_seconds" {
-  
+
   count = var.set_vpc_peering_policy || var.set_shielded_vm_policy ? 1 : 0
 
   depends_on = [
-      google_project_organization_policy.vpc_peering_policy,
-      google_project_organization_policy.shielded_vm_policy
-      ]
+    google_project_organization_policy.vpc_peering_policy,
+    google_project_organization_policy.shielded_vm_policy
+  ]
 
   create_duration = "120s"
 }

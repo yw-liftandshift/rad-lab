@@ -16,7 +16,7 @@
 
 
 provider "google" {
-  alias        = "impersonated"
+  alias = "impersonated"
   scopes = [
     "https://www.googleapis.com/auth/cloud-platform",
     "https://www.googleapis.com/auth/userinfo.email"
@@ -86,7 +86,7 @@ resource "google_project_service" "enabled_services" {
 }
 
 resource "time_sleep" "wait_120_seconds" {
-  count = var.enable_services ? 1 : 0
+  count           = var.enable_services ? 1 : 0
   create_duration = "120s"
 
   depends_on = [
@@ -95,16 +95,16 @@ resource "time_sleep" "wait_120_seconds" {
 }
 
 module "billing_budget" {
-  source                  = "terraform-google-modules/project-factory/google//modules/budget"
-  display_name            = format("RADLab Billing Budget - %s", local.project.project_id)
-  billing_account         = var.billing_account_id
-  projects                = ["${local.project.project_id}"]
-  amount                  = var.billing_budget_amount
-  alert_spend_basis       = var.billing_budget_alert_spend_basis
-  alert_spent_percents    = var.billing_budget_alert_spent_percents
-  credit_types_treatment  = var.billing_budget_credit_types_treatment
-  labels                  = var.billing_budget_labels
-  services                = var.billing_budget_services
+  source                 = "terraform-google-modules/project-factory/google//modules/budget"
+  display_name           = format("RADLab Billing Budget - %s", local.project.project_id)
+  billing_account        = var.billing_account_id
+  projects               = ["${local.project.project_id}"]
+  amount                 = var.billing_budget_amount
+  alert_spend_basis      = var.billing_budget_alert_spend_basis
+  alert_spent_percents   = var.billing_budget_alert_spent_percents
+  credit_types_treatment = var.billing_budget_credit_types_treatment
+  labels                 = var.billing_budget_labels
+  services               = var.billing_budget_services
 
   depends_on = [
     time_sleep.wait_120_seconds

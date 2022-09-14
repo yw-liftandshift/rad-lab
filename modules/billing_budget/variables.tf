@@ -17,7 +17,7 @@
 variable "apis" {
   description = "The list of GCP apis to enable."
   type        = set(string)
-  default     = ["compute.googleapis.com","bigquery.googleapis.com","bigquerystorage.googleapis.com"]
+  default     = ["compute.googleapis.com", "bigquery.googleapis.com", "bigquerystorage.googleapis.com"]
 }
 
 variable "billing_account_id" {
@@ -34,7 +34,7 @@ variable "billing_budget_alert_spend_basis" {
 variable "billing_budget_alert_spent_percents" {
   description = "A list of percentages of the budget to alert on when threshold is exceeded"
   type        = list(number)
-  default     = [0.5,0.7,1]
+  default     = [0.5, 0.7, 1]
 }
 
 variable "billing_budget_amount" {

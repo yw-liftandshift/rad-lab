@@ -50,9 +50,18 @@ locals {
     "compute.googleapis.com",
     "lifesciences.googleapis.com",
     "cloudfunctions.googleapis.com",
-    "cloudbuild.googleapis.com"
+    "cloudbuild.googleapis.com",
+    "iap.googleapis.com"
   ] : []
 
+  owner_org_roles = [
+    "roles/compute.osLoginExternalUser"
+  ]
+
+  owner_project_roles = [
+    "roles/editor",
+    "roles/iap.tunnelResourceAccessor"
+  ]
 }
 
 resource "random_id" "random_id" {
@@ -265,6 +274,20 @@ resource "null_resource" "build_and_push_image" {
   provisioner "local-exec" {
     working_dir = path.module
     command     = "bash ${path.module}/scripts/build/container/fastqc-0.11.9a/build-container.sh ${local.project.project_id} ${var.resource_creator_identity}"
-
   }
+}
+
+# Owner Roles
+resource "google_organization_iam_member" "owner_org_roles" {
+  for_each = toset(local.owner_org_roles)
+  org_id   = var.organization_id
+  role     = each.value
+  member   = "user:${var.owner}"
+}
+
+resource "google_project_iam_member" "owner_project_roles" {
+  for_each = toset(local.owner_project_roles)
+  project  = local.project.project_id
+  role     = each.value
+  member   = "user:${var.owner}"
 }
