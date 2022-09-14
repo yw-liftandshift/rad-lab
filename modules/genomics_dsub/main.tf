@@ -201,18 +201,17 @@ resource "google_storage_bucket_iam_member" "sa_p_ngs_output_bucket" {
   ]
 }
 
-resource "time_sleep" "wait_iam_binding" {
+resource "time_sleep" "onboarding_stop" {
   depends_on = [
-    null_resource.build_and_push_image,
     google_project_iam_member.gcs_sa_pubsub_publisher,
     google_storage_bucket_iam_member.sa_p_ngs_input_bucket,
     google_storage_bucket_iam_member.sa_p_ngs_output_bucket,
     google_storage_bucket_iam_binding.binding1,
     google_storage_bucket.input_bucket,
-    google_storage_bucket.output_bucket
+    google_storage_bucket.output_bucket,
   ]
 
-  create_duration = "180s"
+  create_duration = "1s"
 }
 
 resource "google_cloudfunctions2_function" "function" {
@@ -262,14 +261,7 @@ resource "google_cloudfunctions2_function" "function" {
   }
 
   depends_on = [
-    null_resource.build_and_push_image,
-    google_project_iam_member.gcs_sa_pubsub_publisher,
-    google_storage_bucket_iam_member.sa_p_ngs_input_bucket,
-    google_storage_bucket_iam_member.sa_p_ngs_output_bucket,
-    google_storage_bucket_iam_binding.binding1,
-    google_storage_bucket.input_bucket,
-    google_storage_bucket.output_bucket,
-    time_sleep.wait_iam_binding
+    time_sleep.onboarding_stop
   ]
 }
 
@@ -279,6 +271,10 @@ resource "google_artifact_registry_repository" "fastqc" {
   location      = var.region
   repository_id = "fastqc"
   format        = "DOCKER"
+
+  depends_on = [
+    time_sleep.onboarding_stop
+  ]
 }
 
 resource "null_resource" "create_cloudbuild_bucket" {
@@ -303,8 +299,6 @@ resource "null_resource" "build_and_push_image" {
   depends_on = [
     google_artifact_registry_repository.fastqc,
     null_resource.create_cloudbuild_bucket,
-    google_project_iam_member.sa_p_ngs_permissions
-
   ]
 }
 
