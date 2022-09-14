@@ -42,7 +42,7 @@ resource "google_billing_budget" "budget" {
   count = var.create_budget ? 1 : 0
 
   billing_account = var.billing_account_id
-  display_name    = format("Billing Budget - %s", local.project.project_id)
+  display_name    = format("Billing Budget for %s", local.project.project_id)
 
   budget_filter {
     projects               = toset(["projects/${local.project.project_id}"])

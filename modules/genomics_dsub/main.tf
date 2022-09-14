@@ -18,6 +18,8 @@ locals {
   random_id = var.deployment_id != null ? var.deployment_id : random_id.random_id.hex
   region    = join("-", [split("-", var.zone)[0], split("-", var.zone)[1]])
 
+  project_name = var.use_random_id ? format("%s-%s", var.project_id_prefix, local.random_id) : var.project_id_prefix
+
   project = (var.create_project
     ? try(module.project_radlab_genomics.0, null)
     : try(data.google_project.existing_project.0, null)
@@ -71,7 +73,7 @@ module "project_radlab_genomics" {
   source  = "terraform-google-modules/project-factory/google"
   version = "~> 13.0"
 
-  name              = format("%s-%s", var.project_id_prefix, local.random_id)
+  name              = local.project_name
   random_project_id = false
   folder_id         = var.folder_id
   billing_account   = var.billing_account_id

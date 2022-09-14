@@ -180,6 +180,12 @@ variable "project_id_prefix" {
   default     = "radlab-genomics-dsub"
 }
 
+variable "use_random_id" {
+  description = "If set to true, it will append a random id to the project id"
+  type        = bool
+  default     = false
+}
+
 variable "resource_creator_identity" {
   description = "Terraform Service Account which will be creating the GCP resources. If not set, it will use user credentials spinning up the module. {{UIMeta group=0 order=4 updatesafe }}"
   type        = string
