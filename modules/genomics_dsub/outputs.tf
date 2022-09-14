@@ -29,3 +29,13 @@ output "project_id" {
   description = "Genomics Project ID"
   value       = local.project.project_id
 }
+
+output "input_bucket" {
+  description = "Input GCS bucket to which to upload fastq or fastq.qz files."
+  value       = google_storage_bucket.input_bucket.name
+}
+
+output "output_bucket" {
+  description = "Output GCS bucket in which QC reports and execution logs are stored."
+  value       = google_storage_bucket.output_bucket.name
+}
