@@ -90,13 +90,13 @@ resource "google_project_service" "enabled_services" {
   ]
 }
 
-resource "time_sleep" "wait_enabled_services" {
-  depends_on = [
-    google_project_service.enabled_services,
-  ]
+# resource "time_sleep" "wait_enabled_services" {
+#   depends_on = [
+#     google_project_service.enabled_services,
+#   ]
 
-  create_duration = "1200s"
-}
+#   create_duration = "1200s"
+# }
 
 data "google_compute_network" "default" {
   count   = var.create_network ? 0 : 1
@@ -241,7 +241,7 @@ resource "google_notebooks_instance" "ai_notebook_usermanaged" {
   }
   depends_on = [
     time_sleep.wait_120_seconds,
-    time_sleep.wait_enabled_services,
+    # time_sleep.wait_enabled_services,
     google_storage_bucket_object.notebooks,
   ]
 }
@@ -286,7 +286,7 @@ resource "google_notebooks_runtime" "ai_notebook_googlemanaged" {
   }
   depends_on = [
     time_sleep.wait_120_seconds,
-    time_sleep.wait_enabled_services,
+    # time_sleep.wait_enabled_services,
     google_storage_bucket_object.notebooks,
   ]
 }
