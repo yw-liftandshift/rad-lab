@@ -28,7 +28,7 @@ variable "billing_budget_alert_spend_basis" {
 variable "billing_budget_alert_spent_percents" {
   description = "A list of percentages of the budget to alert on when threshold is exceeded. {{UIMeta group=0 order=7 updatesafe }}"
   type        = list(number)
-  default     = [0.5,0.7,1]
+  default     = [0.5, 0.7, 1]
 }
 
 variable "billing_budget_amount" {
@@ -75,6 +75,31 @@ variable "billing_budget_pubsub_topic" {
   description = "If true, creates a Cloud Pub/Sub topic where budget related messages will be published. Default is false. {{UIMeta group=0 order=14 updatesafe }}"
   type        = bool
   default     = false
+}
+
+variable "billing_budget_start_date_year" {
+  description = "Year of the date to start budget with. Must be from 1 to 9999"
+  type        = number
+}
+variable "billing_budget_start_date_month" {
+  description = "Month of a year to start budget with. Must be from 1 to 12"
+  type        = number
+}
+variable "billing_budget_start_date_day" {
+  description = "Day of a month to start budget with. Must be from 1 to 31 and valid for the year and month"
+  type        = number
+}
+variable "billing_budget_end_date_year" {
+  description = "Year of the date to end budget with. Must be from 1 to 9999"
+  type        = number
+}
+variable "billing_budget_end_date_month" {
+  description = "Month of a year to end budget with. Must be from 1 to 12"
+  type        = number
+}
+variable "billing_budget_end_date_day" {
+  description = "Day of a month to end budget with. Must be from 1 to 31 and valid for the year and month"
+  type        = number
 }
 
 variable "boot_disk_size_gb" {

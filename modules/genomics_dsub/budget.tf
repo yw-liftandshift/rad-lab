@@ -23,11 +23,11 @@ resource "google_monitoring_notification_channel" "email_notif" {
   display_name = "Billing Budget Notification Channel - ${element(var.billing_budget_notification_email_addresses, count.index)}"
   project      = local.project.project_id
   type         = "email"
-  labels       = {
+  labels = {
     email_address = "${element(var.billing_budget_notification_email_addresses, count.index)}"
   }
-  
-  depends_on   = [
+
+  depends_on = [
     time_sleep.wait_120_seconds
   ]
 }
@@ -49,6 +49,18 @@ resource "google_billing_budget" "budget" {
     credit_types_treatment = var.billing_budget_credit_types_treatment
     services               = var.billing_budget_services
     labels                 = var.billing_budget_labels
+    custom_period {
+      start_date {
+        year  = var.billing_budget_start_date_year
+        month = var.billing_budget_start_date_month
+        day   = var.billing_budget_start_date_day
+      }
+      end_date {
+        year  = var.billing_budget_end_date_year
+        month = var.billing_budget_end_date_month
+        day   = var.billing_budget_end_date_day
+      }
+    }
   }
 
   amount {

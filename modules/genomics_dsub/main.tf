@@ -15,9 +15,9 @@
  */
 
 locals {
-  random_id                  = var.deployment_id != null ? var.deployment_id : random_id.random_id.hex
-  region                     = join("-", [split("-", var.zone)[0], split("-", var.zone)[1]])
-  
+  random_id = var.deployment_id != null ? var.deployment_id : random_id.random_id.hex
+  region    = join("-", [split("-", var.zone)[0], split("-", var.zone)[1]])
+
   project = (var.create_project
     ? try(module.project_radlab_genomics.0, null)
     : try(data.google_project.existing_project.0, null)
@@ -34,7 +34,7 @@ locals {
     ? try(module.vpc_ngs.0.subnets["${local.region}/${var.subnet}"], null)
     : try(data.google_compute_subnetwork.default.0, null)
   )
-  
+
   ngs_sa_project_roles = [
     "roles/compute.instanceAdmin",
     "roles/storage.objectViewer",
@@ -76,7 +76,7 @@ module "project_radlab_genomics" {
   folder_id         = var.folder_id
   billing_account   = var.billing_account_id
   org_id            = var.organization_id
-  activate_apis = []
+  activate_apis     = []
 }
 
 resource "google_project_service" "enabled_services" {
@@ -123,7 +123,7 @@ module "vpc_ngs" {
       subnet_private_access = true
     }
   ]
-  
+
   depends_on = [
     module.project_radlab_genomics,
     google_project_service.enabled_services,
