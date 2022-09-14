@@ -183,7 +183,7 @@ variable "project_id_prefix" {
 variable "use_random_id" {
   description = "If set to true, it will append a random id to the project id"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "resource_creator_identity" {
