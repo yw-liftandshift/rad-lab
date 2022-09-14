@@ -46,8 +46,18 @@ locals {
     "compute.googleapis.com",
     "bigquery.googleapis.com",
     "notebooks.googleapis.com",
-    "bigquerystorage.googleapis.com"
+    "bigquerystorage.googleapis.com",
+    "iap.googleapis.com"
   ] : []
+
+  owner_org_roles = [
+    "roles/compute.osLoginExternalUser"
+  ]
+
+  owner_project_roles = [
+    "roles/editor",
+    "roles/iap.tunnelResourceAccessor"
+  ]
 }
 
 resource "random_id" "default" {
@@ -312,6 +322,22 @@ resource "google_storage_bucket_iam_binding" "binding" {
   members = var.trusted_users
 }
 
+# Owner Roles
+resource "google_organization_iam_member" "owner_org_roles" {
+  for_each = toset(local.owner_org_roles)
+  org_id   = var.organization_id
+  role     = each.value
+  member   = "user:${var.owner}"
+}
+
+resource "google_project_iam_member" "owner_project_roles" {
+  for_each = toset(local.owner_project_roles)
+  project  = local.project.project_id
+  role     = each.value
+  member   = "user:${var.owner}"
+}
+
+# Budget
 resource "google_billing_budget" "budget" {
   billing_account = var.billing_account_id
   display_name    = "Billing Budget for ${var.project_name} project"
