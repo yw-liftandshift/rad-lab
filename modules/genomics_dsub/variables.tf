@@ -195,31 +195,31 @@ variable "resource_creator_identity" {
 variable "set_domain_restricted_sharing_policy" {
   description = "Enable org policy to allow all principals to be added to IAM policies. {{UIMeta group=0 order=15 updatesafe }}"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "set_external_ip_policy" {
   description = "Enable org policy to allow External (Public) IP addresses on virtual machines. {{UIMeta group=0 order=16 updatesafe }}"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "set_shielded_vm_policy" {
   description = "Apply org policy to disable shielded VMs. {{UIMeta group=0 order=17 updatesafe }}"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "set_trustedimage_project_policy" {
   description = "Apply org policy to set the trusted image projects. {{UIMeta group=0 order=18 updatesafe }}"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "set_cloudfunctions_ingress_project_policy" {
   description = "Apply org policy to set the ingress settings for cloud functions. {{UIMeta group=0 order=19 updatesafe }}"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "subnet" {
