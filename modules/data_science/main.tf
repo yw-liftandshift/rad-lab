@@ -40,7 +40,8 @@ locals {
     "roles/bigquery.user",
     "roles/storage.objectViewer",
     "roles/iam.serviceAccountUser",
-    "roles/storage.admin"
+    "roles/storage.admin",
+    "roles/serviceusage.serviceUsageConsumer"
   ]
 
   project_services = var.enable_services ? [
