@@ -237,3 +237,7 @@ variable "manager" {
   description = "Manager who approved the project"
   type        = string
 }
+
+variable "budget_notifications_topic" {
+  description = "Pub/Sub topic for budget status updates"
+}
