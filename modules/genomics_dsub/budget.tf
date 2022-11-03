@@ -81,7 +81,7 @@ resource "google_billing_budget" "budget" {
   dynamic "all_updates_rule" {
     for_each = local.all_updates_rule
     content {
-      pubsub_topic                     = var.billing_budget_pubsub_topic ? "${google_pubsub_topic.budget_topic[0].id}" : null
+      pubsub_topic                     = var.budget_notifications_topic
       monitoring_notification_channels = length(var.billing_budget_notification_email_addresses) > 0 ? toset(google_monitoring_notification_channel.email_notif[*].name) : []
     }
   }
