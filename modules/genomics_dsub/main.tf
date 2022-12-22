@@ -54,10 +54,6 @@ locals {
     "iap.googleapis.com"
   ] : []
 
-  owner_org_roles = [
-    "roles/compute.osLoginExternalUser"
-  ]
-
   owner_project_roles = [
     "roles/editor",
     "roles/iap.tunnelResourceAccessor"
@@ -278,13 +274,6 @@ resource "null_resource" "build_and_push_image" {
 }
 
 # Owner Roles
-resource "google_organization_iam_member" "owner_org_roles" {
-  for_each = toset(local.owner_org_roles)
-  org_id   = var.organization_id
-  role     = each.value
-  member   = "user:${var.owner}"
-}
-
 resource "google_project_iam_member" "owner_project_roles" {
   for_each = toset(local.owner_project_roles)
   project  = local.project.project_id
