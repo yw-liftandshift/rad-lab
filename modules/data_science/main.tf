@@ -231,7 +231,7 @@ resource "google_notebooks_instance" "ai_notebook_usermanaged" {
   boot_disk_type    = var.boot_disk_type
   boot_disk_size_gb = var.boot_disk_size_gb
 
-  no_public_ip    = false
+  no_public_ip    = var.no_public_ip
   no_proxy_access = false
 
   network = local.network.self_link

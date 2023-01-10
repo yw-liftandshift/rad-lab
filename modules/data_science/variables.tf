@@ -241,3 +241,8 @@ variable "manager" {
 variable "budget_notifications_topic" {
   description = "Pub/Sub topic for budget status updates"
 }
+
+variable "no_public_ip" {
+  type        = bool
+  default     = true
+}
