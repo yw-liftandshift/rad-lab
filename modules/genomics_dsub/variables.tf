@@ -246,10 +246,6 @@ variable "zone" {
   default     = "europe-west2-c"
 }
 
-variable "owner" {
-  description = "Owner of the project"
-  type        = string
-}
 variable "budget_notifications_topic" {
   description = "Pub/Sub topic for budget status updates"
 }
