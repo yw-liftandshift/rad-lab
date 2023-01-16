@@ -51,11 +51,6 @@ locals {
     "bigquerystorage.googleapis.com",
     "iap.googleapis.com"
   ] : []
-
-  owner_project_roles = [
-    "roles/editor",
-    "roles/iap.tunnelResourceAccessor"
-  ]
 }
 
 resource "random_id" "default" {
@@ -320,14 +315,6 @@ resource "google_storage_bucket_iam_binding" "binding" {
   members = var.trusted_users
 }
 
-# Owner Roles
-resource "google_project_iam_member" "owner_project_roles" {
-  for_each = toset(local.owner_project_roles)
-  project  = local.project.project_id
-  role     = each.value
-  member   = "user:${var.owner}"
-}
-
 # Budget
 resource "google_billing_budget" "budget" {
   billing_account = var.billing_account_id
@@ -374,7 +361,7 @@ resource "google_billing_budget" "budget" {
       google_monitoring_notification_channel.scientist_notification_channel.id,
       google_monitoring_notification_channel.manager_notification_channel.id
     ]
-    pubsub_topic = var.budget_notifications_topic
+    pubsub_topic                   = var.budget_notifications_topic
     disable_default_iam_recipients = true
   }
 }

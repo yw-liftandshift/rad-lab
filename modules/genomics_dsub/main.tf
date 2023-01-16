@@ -53,11 +53,6 @@ locals {
     "cloudbuild.googleapis.com",
     "iap.googleapis.com"
   ] : []
-
-  owner_project_roles = [
-    "roles/editor",
-    "roles/iap.tunnelResourceAccessor"
-  ]
 }
 
 resource "random_id" "random_id" {
@@ -271,12 +266,4 @@ resource "null_resource" "build_and_push_image" {
     working_dir = path.module
     command     = "bash ${path.module}/scripts/build/container/fastqc-0.11.9a/build-container.sh ${local.project.project_id} ${var.resource_creator_identity}"
   }
-}
-
-# Owner Roles
-resource "google_project_iam_member" "owner_project_roles" {
-  for_each = toset(local.owner_project_roles)
-  project  = local.project.project_id
-  role     = each.value
-  member   = "user:${var.owner}"
 }
