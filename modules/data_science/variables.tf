@@ -145,6 +145,12 @@ variable "project_name" {
   default     = "radlab-data-science"
 }
 
+variable "project_id" {
+  description = "The ID to give the project. If not provided, the `name` will be used."
+  type        = string
+  default     = ""
+}
+
 variable "use_random_id" {
   description = "Set it to true to add a suffix of 4 random characters to the `project_id`."
   type        = bool

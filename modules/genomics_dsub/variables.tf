@@ -180,6 +180,12 @@ variable "project_id_prefix" {
   default     = "radlab-genomics-dsub"
 }
 
+variable "project_id" {
+  description = "The ID to give the project. If not provided, the `name` will be used."
+  type        = string
+  default     = ""
+}
+
 variable "use_random_id" {
   description = "If set to true, it will append a random id to the project id"
   type        = bool

@@ -58,7 +58,7 @@ resource "random_id" "default" {
 
 data "google_project" "existing_project" {
   count      = var.create_project ? 0 : 1
-  project_id = var.project_name
+  project_id = var.project_id
 }
 
 module "project_radlab_gen_cromwell" {
@@ -67,6 +67,7 @@ module "project_radlab_gen_cromwell" {
   version = "~> 13.0"
 
   name              = var.use_random_id ? format("%s-%s", var.project_name, local.random_id) : var.project_name
+  project_id        = var.project_id
   random_project_id = false
   folder_id         = var.folder_id
   billing_account   = var.billing_account_id
