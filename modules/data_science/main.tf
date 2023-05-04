@@ -20,7 +20,7 @@ locals {
     ? try(module.project_radlab_ds_analytics.0, null)
     : try(data.google_project.existing_project.0, null)
   )
-  region = join("-", [split("-", var.zone)[0], split("-", var.zone)[1]])
+  # region = join("-", [split("-", var.zone)[0], split("-", var.zone)[1]])
 
   network = (
     var.create_network
@@ -30,7 +30,7 @@ locals {
 
   subnet = (
     var.create_network
-    ? try(module.vpc_ai_notebook.0.subnets["${local.region}/${var.subnet_name}"], null)
+    ? try(module.vpc_ai_notebook.0.subnets["${var.region}/${var.subnet_name}"], null)
     : try(data.google_compute_subnetwork.default.0, null)
   )
 
@@ -111,7 +111,7 @@ data "google_compute_subnetwork" "default" {
   count   = var.create_network ? 0 : 1
   project = local.project.project_id
   name    = var.subnet_name
-  region  = local.region
+  region  = var.region
 }
 
 module "vpc_ai_notebook" {
@@ -128,7 +128,7 @@ module "vpc_ai_notebook" {
     {
       subnet_name           = var.subnet_name
       subnet_ip             = var.ip_cidr_range
-      subnet_region         = local.region
+      subnet_region         = var.region
       description           = "Subnetwork inside *vpc-analytics* VPC network, created via Terraform"
       subnet_private_access = true
     }
@@ -253,7 +253,7 @@ resource "google_notebooks_runtime" "ai_notebook_googlemanaged" {
   count    = (var.notebook_count > 0 ? true : false) && !var.create_usermanaged_notebook ? var.notebook_count : 0
   name     = "googlemanaged-notebooks-${count.index + 1}"
   project  = local.project.project_id
-  location = local.region
+  location = var.region
   access_config {
     access_type   = "SERVICE_ACCOUNT"
     runtime_owner = google_service_account.sa_p_notebook.email
@@ -297,7 +297,7 @@ resource "google_notebooks_runtime" "ai_notebook_googlemanaged" {
 resource "google_storage_bucket" "user_scripts_bucket" {
   project                     = local.project.project_id
   name                        = join("", ["user-scripts-", local.project.project_id])
-  location                    = local.region
+  location                    = var.region
   force_destroy               = true
   uniform_bucket_level_access = true
 

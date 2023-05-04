@@ -187,6 +187,11 @@ variable "trusted_users" {
   default     = []
 }
 
+variable "region" {
+  description = "Region to create resources"
+  type = string
+}
+
 variable "zone" {
   description = "Cloud Zone associated to the AI Notebooks"
   type        = string
