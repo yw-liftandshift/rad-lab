@@ -77,31 +77,6 @@ variable "billing_budget_pubsub_topic" {
   default     = false
 }
 
-variable "billing_budget_start_date_year" {
-  description = "Year of the date to start budget with. Must be from 1 to 9999"
-  type        = number
-}
-variable "billing_budget_start_date_month" {
-  description = "Month of a year to start budget with. Must be from 1 to 12"
-  type        = number
-}
-variable "billing_budget_start_date_day" {
-  description = "Day of a month to start budget with. Must be from 1 to 31 and valid for the year and month"
-  type        = number
-}
-variable "billing_budget_end_date_year" {
-  description = "Year of the date to end budget with. Must be from 1 to 9999"
-  type        = number
-}
-variable "billing_budget_end_date_month" {
-  description = "Month of a year to end budget with. Must be from 1 to 12"
-  type        = number
-}
-variable "billing_budget_end_date_day" {
-  description = "Day of a month to end budget with. Must be from 1 to 31 and valid for the year and month"
-  type        = number
-}
-
 variable "boot_disk_size_gb" {
   description = "The size of the boot disk in GB attached to this instance. {{UIMeta group=3 order=3 }}"
   type        = number
@@ -244,8 +219,4 @@ variable "zone" {
   description = "Cloud Zone associated to the project. {{UIMeta group=2 order=3 }}"
   type        = string
   default     = "europe-west2-c"
-}
-
-variable "budget_notifications_topic" {
-  description = "Pub/Sub topic for budget status updates"
 }
